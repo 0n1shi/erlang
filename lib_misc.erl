@@ -2,7 +2,7 @@
 
 -export([factorial/1, factorial/2, filter/2, for/3,
 	 odds_and_evens_acc/1, odds_and_evens_acc/3, perms/1,
-	 pythag/1, qsort/1, sleep/1, flush_buffer/0]).
+	 pythag/1, qsort/1, sleep/1, flush_buffer/0, on_exit/2, priority_receive/0]).
 
 for(Max, Max, F) -> [F(Max)];
 for(I, Max, F) -> [F(I) | for(I + 1, Max, F)].
@@ -66,3 +66,15 @@ priority_receive() ->
                 Any
             end
         end.
+
+%% 指定したプロセスの終了をフックし任意の処理を行うようなプロセスを生成する
+on_exit(Pid, Fun) ->
+    spawn(fun() ->
+        process_flag(trap_exit, true),
+        link(Pid),
+        receive
+            {'EXIT', Pid, Why} ->
+                Fun(Why)
+        end
+    end).
+
