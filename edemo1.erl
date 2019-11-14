@@ -50,3 +50,4 @@ status(Name, Pid) ->
       false ->
 	  io:format("process ~p (~p) is dead~n", [Name, Pid])
     end.
+
